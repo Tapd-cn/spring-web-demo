@@ -104,7 +104,7 @@ pipeline {
           }
         }
         echo '----------Integration Deploy Finished----------'
-        if (!params.RunCD) {
+        if (params.RunCD) {
           echo '----------Run CD Job----------'
           if (params.DeployModel == 'release') {
             build job: "./pipeline_for_cd_${artifactId}", parameters: [string(name: 'DeployModel', value: 'release'), string(name: 'DeployVersion', value: "${version}")]
