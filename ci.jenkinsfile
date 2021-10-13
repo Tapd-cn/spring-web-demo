@@ -102,17 +102,17 @@ pipeline {
               sh "ssh -o StrictHostKeyChecking=no -p ${sshPort} -l jenkins \$cdMachineHost /usr/sbin/nginx -s reload"
             }
           }
+          if (params.RunCD) {
+            echo '----------Run CD Job----------'
+            if (params.DeployModel == 'release') {
+              build job: "./pipeline_for_cd_${artifactId}", parameters: [string(name: 'DeployModel', value: 'release'), string(name: 'DeployVersion', value: "${version}")]
+            }else{
+              build job: "./pipeline_for_cd_${artifactId}", parameters: [string(name: 'DeployModel', value: 'snapshot'), string(name: 'DeployVersion', value: 'snapshot')]
+            }          
+            echo '----------CD Job Finished----------'
+          }
         }
         echo '----------Integration Deploy Finished----------'
-        if (params.RunCD) {
-          echo '----------Run CD Job----------'
-          if (params.DeployModel == 'release') {
-            build job: "./pipeline_for_cd_${artifactId}", parameters: [string(name: 'DeployModel', value: 'release'), string(name: 'DeployVersion', value: "${version}")]
-          }else{
-            build job: "./pipeline_for_cd_${artifactId}", parameters: [string(name: 'DeployModel', value: 'snapshot'), string(name: 'DeployVersion', value: 'snapshot')]
-          }          
-          echo '----------CD Job Finished----------'
-        }
       }
     }
   }
